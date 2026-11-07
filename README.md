@@ -2,7 +2,7 @@
 
 `bujo` is a Bash script for creating and organizing journal files by year,
 month, and day. Each file contains a task area followed by an `@MIGRATED@`
-placeholder. The `migrate` function moves marked tasks to another period.
+placeholder. The `bujo_migrate` function moves marked tasks to another period.
 
 Load the script into the current shell to use its functions:
 
