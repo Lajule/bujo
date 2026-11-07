@@ -12,7 +12,7 @@ _bujo_new_year() {
     local year="${1:-}"
     [[ -n "$year" ]] || { echo 'usage: bujo_new <year>' >&2; return 2; }
     LC_ALL=C date -d "Jan 1 $year" '+%Y' >/dev/null || return 1
-    printf '%d\n\n.\n.\n.\n@MIGRATED@\n\nJan\n\nFeb\n\nMar\n\nApr\n\nMay\n\nJun\n\nJul\n\nAug\n\nSep\n\nOct\n\nNov\n\nDec\n' "$year" >"$year"
+    printf '%d\n\n.\n.\n.\n@MIGRATED@\n\nJan\nFeb\nMar\nApr\nMay\nJun\nJul\nAug\nSep\nOct\nNov\nDec\n' "$year" >"$year"
     printf 'created %s\n' "$year"
 }
 
@@ -76,20 +76,36 @@ _bujo_migrate_to() {
     local source="$1" target="$2" marker="$3" entries tmp
     [[ -f "$target" ]] || return 0
     grep -q '^@MIGRATED@$' "$target" || { printf 'bujo_migrate: placeholder @MIGRATED@ not found in %s\n' "$target" >&2; return 1; }
-    entries="$(sed -n "s/^${marker}/./p" "$source" | awk '!seen[$0]++')"
+    entries="$(awk -v marker="$marker" '
+        marker == "<" && /^[x~]/ { line = $0; if (!seen[line]++) print line; next }
+        index($0, marker) == 1 { line = "." substr($0, 2); if (!seen[line]++) print line }
+    ' "$source")"
     [[ -n "$entries" ]] || return 0
     tmp="$(mktemp "${target}.XXXXXX")" || return 1
     if ! awk -v entries="$entries" '
         BEGIN { n = split(entries, lines, "\n") }
         /^@MIGRATED@$/ {
+            total = NR - 1
             for (i = 1; i <= n; i++) {
                 duplicate = 0
-                for (j = 1; j < NR; j++) if (seen[j] == lines[i]) duplicate = 1
-                if (!duplicate) print lines[i]
+                key = substr(lines[i], 2)
+                for (j = 1; j <= total; j++) {
+                    if (substr(seen[j], 1, 1) ~ /^[.x~]$/ && substr(seen[j], 2) == key) {
+                        duplicate = 1
+                        if (substr(lines[i], 1, 1) ~ /^[x~]$/ && substr(seen[j], 1, 1) == ".") {
+                            seen[j] = substr(lines[i], 1, 1) substr(seen[j], 2)
+                        }
+                    }
+                }
+                if (!duplicate) seen[++total] = lines[i]
             }
-            print "@MIGRATED@"; next
+            for (j = 1; j <= total; j++) print seen[j]
+            print "@MIGRATED@"
+            processed = 1
+            next
         }
-        { seen[NR] = $0; print }
+        !processed { seen[NR] = $0; next }
+        { print }
     ' "$target" >"$tmp"; then rm -f "$tmp"; return 1; fi
     if ! cat "$tmp" >"$target"; then rm -f "$tmp"; return 1; fi
     rm -f "$tmp"

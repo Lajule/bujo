@@ -35,13 +35,19 @@ destination files in the current directory. If a destination does not exist,
 it is skipped.
 
 - **Year** — `bujo_migrate 2026` transfers lines in `2026` that start with `>` to
-  `2027`. In the destination, the marker is replaced with `.`.
+  the next year (`2027`). In the destination, the marker is replaced with `.`.
 - **Month** — `bujo_migrate 2026-Feb` transfers lines starting with `>` to the next
   month (`2026-Mar`), and lines starting with `<` to the year file (`2026`).
 - **Day** — `bujo_migrate 2026-Feb-28-Sat` transfers lines starting with `>` to the
   following day, and lines starting with `<` to the month file (`2026-Feb`).
   The weekday in the filename must match the date.
 
-Migrated tasks are inserted where `@MIGRATED@` appears, as lines starting with
-`.`. The placeholder is retained for future migrations. Duplicate migrated
-tasks and duplicates already present before the placeholder are skipped.
+When migrating a month or day to its parent, lines starting with `x` or `~` are
+also transferred to that parent and keep their prefix. For example, `x task`
+and `~ task` in a day file are copied to the month file with the same prefixes.
+This carries their marked status into the parent journal.
+
+Migrated `>` and `<` tasks are inserted where `@MIGRATED@` appears as lines
+starting with `.`. Transferred `x` and `~` tasks keep their original prefixes.
+The placeholder is retained for future migrations. Duplicate migrated tasks
+and duplicates already present before the placeholder are skipped.
