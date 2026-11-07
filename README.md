@@ -12,18 +12,18 @@ source ./bujo.sh
 
 ## Creating files
 
-### `bujo_new_year <year>`
+### `bujo_new <year>`
 
 Creates a file named for the year, such as `2026`. It contains a heading, a task
 area with the `@MIGRATED@` placeholder, and the twelve months.
 
-### `bujo_new_month <year> <month>`
+### `bujo_new <year> <month>`
 
 Creates a file named with the year and the month's English abbreviation, such
 as `2026-Feb`. The file contains a heading, a task area, and a list of the
 month's days with their weekdays.
 
-### `bujo_new_day <year> <month> <day>`
+### `bujo_new <year> <month> <day>`
 
 Creates a daily journal file named with the date and weekday, such as
 `2026-Feb-28-Sat`. It contains a heading and a task area.

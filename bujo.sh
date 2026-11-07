@@ -1,14 +1,23 @@
-bujo_new_year() {
+bujo_new() {
+    case $# in
+        1) _bujo_new_year "$@" ;;
+        2) _bujo_new_month "$@" ;;
+        3) _bujo_new_day "$@" ;;
+        *) echo 'usage: bujo_new <year> [month [day]]' >&2; return 2 ;;
+    esac
+}
+
+_bujo_new_year() {
     local year="${1:-}"
-    [[ -n "$year" ]] || { echo 'usage: bujo_new_year <year>' >&2; return 2; }
+    [[ -n "$year" ]] || { echo 'usage: bujo_new <year>' >&2; return 2; }
     LC_ALL=C date -d "Jan 1 $year" '+%Y' >/dev/null || return 1
     printf '%d\n\n.\n.\n.\n@MIGRATED@\n\nJan\n\nFeb\n\nMar\n\nApr\n\nMay\n\nJun\n\nJul\n\nAug\n\nSep\n\nOct\n\nNov\n\nDec\n' "$year" >"$year"
     printf 'created %s\n' "$year"
 }
 
-bujo_new_month() {
+_bujo_new_month() {
     local year="${1:-}" month="${2:-}" short last_day filename day weekday
-    [[ -n "$year" && -n "$month" ]] || { echo 'usage: bujo_new_month <year> <month>' >&2; return 2; }
+    [[ -n "$year" && -n "$month" ]] || { echo 'usage: bujo_new <year> <month>' >&2; return 2; }
     short="$(LC_ALL=C date -d "$month 1 $year" '+%b')" || return 1
     last_day="$(LC_ALL=C date -d "$month 1 $year +1 month -1 day" '+%d')" || return 1
     last_day=$((10#$last_day)); filename="$year-$short"
@@ -22,9 +31,9 @@ bujo_new_month() {
     printf 'created %s\n' "$filename"
 }
 
-bujo_new_day() {
+_bujo_new_day() {
     local year="${1:-}" month="${2:-}" day="${3:-}" short weekday filename
-    [[ -n "$year" && -n "$month" && -n "$day" ]] || { echo 'usage: bujo_new_day <year> <month> <day>' >&2; return 2; }
+    [[ -n "$year" && -n "$month" && -n "$day" ]] || { echo 'usage: bujo_new <year> <month> <day>' >&2; return 2; }
     short="$(LC_ALL=C date -d "$month $day $year" '+%b')" || return 1
     weekday="$(LC_ALL=C date -d "$month $day $year" '+%a')" || return 1
     filename="$year-$short-$day-$weekday"
@@ -35,7 +44,7 @@ bujo_new_day() {
 _bujo_migrate_to() {
     local source="$1" target="$2" marker="$3" entries tmp
     [[ -f "$target" ]] || return 0
-    grep -q '^@MIGRATED@$' "$target" || { printf 'migrate: placeholder @MIGRATED@ not found in %s\n' "$target" >&2; return 1; }
+    grep -q '^@MIGRATED@$' "$target" || { printf 'bujo_migrate: placeholder @MIGRATED@ not found in %s\n' "$target" >&2; return 1; }
     entries="$(sed -n "s/^${marker}/./p" "$source" | awk '!seen[$0]++')"
     [[ -n "$entries" ]] || return 0
     tmp="$(mktemp "${target}.XXXXXX")" || return 1
@@ -58,8 +67,8 @@ _bujo_migrate_to() {
 
 bujo_migrate() {
     local source="${1:-}" target parent year month day weekday iso_date actual_weekday
-    [[ -n "$source" ]] || { echo 'usage: migrate <year|year-month|year-month-day>' >&2; return 2; }
-    [[ -f "$source" ]] || { printf 'migrate: source file not found: %s\n' "$source" >&2; return 1; }
+    [[ -n "$source" ]] || { echo 'usage: bujo_migrate <file>' >&2; return 2; }
+    [[ -f "$source" ]] || { printf 'bujo_migrate: source file not found: %s\n' "$source" >&2; return 1; }
     case "$source" in
         ([0-9][0-9][0-9][0-9])
             target=$((10#$source + 1))
@@ -75,12 +84,12 @@ bujo_migrate() {
             IFS=- read -r year month day weekday <<< "$source"
             iso_date="$(LC_ALL=C date -d "$month $day $year" '+%F' 2>/dev/null)" || return 2
             actual_weekday="$(LC_ALL=C date -d "$iso_date" '+%a')" || return 1
-            [[ "$actual_weekday" == "$weekday" ]] || { printf 'migrate: weekday does not match date in %s\n' "$source" >&2; return 2; }
+            [[ "$actual_weekday" == "$weekday" ]] || { printf 'bujo_migrate: weekday does not match date in %s\n' "$source" >&2; return 2; }
             target="$(LC_ALL=C date -d "$iso_date +1 day" '+%Y-%b-%-d-%a')" || return 1
             parent="$year-$month"
             [[ ! -f "$target" ]] || _bujo_migrate_to "$source" "$target" '>' || return 1
             [[ ! -f "$parent" ]] || _bujo_migrate_to "$source" "$parent" '<' || return 1
             ;;
-        (*) printf 'migrate: unrecognized filename: %s\n' "$source" >&2; return 2 ;;
+        (*) printf 'bujo_migrate: unrecognized filename: %s\n' "$source" >&2; return 2 ;;
     esac
 }
