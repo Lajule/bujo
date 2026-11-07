@@ -42,12 +42,12 @@ it is skipped.
   following day, and lines starting with `<` to the month file (`2026-Feb`).
   The weekday in the filename must match the date.
 
-When migrating a month or day to its parent, lines starting with `x` or `~` are
-also transferred to that parent and keep their prefix. For example, `x task`
-and `~ task` in a day file are copied to the month file with the same prefixes.
-This carries their marked status into the parent journal.
+When migrating a month or day to its parent, lines starting with `x` or `~`
+update the prefix of the matching task already present in the parent. They are
+skipped when that task is absent, so they never create a new parent task.
 
 Migrated `>` and `<` tasks are inserted where `@MIGRATED@` appears as lines
-starting with `.`. Transferred `x` and `~` tasks keep their original prefixes.
-The placeholder is retained for future migrations. Duplicate migrated tasks
-and duplicates already present before the placeholder are skipped.
+starting with `.`. Matching parent tasks are marked with the incoming `x` or
+`~` prefix. The placeholder is retained for future migrations. Duplicate
+migrated tasks and duplicates already present before the placeholder are
+skipped.
