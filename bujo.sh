@@ -1,3 +1,4 @@
+# Create a year, month, or day journal file based on the number of arguments.
 bujo_new() {
     case $# in
         1) _bujo_new_year "$@" ;;
@@ -41,30 +42,7 @@ _bujo_new_day() {
     printf 'created %s\n' "$filename"
 }
 
-_bujo_migrate_to() {
-    local source="$1" target="$2" marker="$3" entries tmp
-    [[ -f "$target" ]] || return 0
-    grep -q '^@MIGRATED@$' "$target" || { printf 'bujo_migrate: placeholder @MIGRATED@ not found in %s\n' "$target" >&2; return 1; }
-    entries="$(sed -n "s/^${marker}/./p" "$source" | awk '!seen[$0]++')"
-    [[ -n "$entries" ]] || return 0
-    tmp="$(mktemp "${target}.XXXXXX")" || return 1
-    if ! awk -v entries="$entries" '
-        BEGIN { n = split(entries, lines, "\n") }
-        /^@MIGRATED@$/ {
-            for (i = 1; i <= n; i++) {
-                duplicate = 0
-                for (j = 1; j < NR; j++) if (seen[j] == lines[i]) duplicate = 1
-                if (!duplicate) print lines[i]
-            }
-            print "@MIGRATED@"; next
-        }
-        { seen[NR] = $0; print }
-    ' "$target" >"$tmp"; then rm -f "$tmp"; return 1; fi
-    if ! cat "$tmp" >"$target"; then rm -f "$tmp"; return 1; fi
-    rm -f "$tmp"
-    printf 'migrated entries from %s to %s\n' "$source" "$target"
-}
-
+# Move marked tasks from a journal file to its next period and parent period.
 bujo_migrate() {
     local source="${1:-}" target parent year month day weekday iso_date actual_weekday
     [[ -n "$source" ]] || { echo 'usage: bujo_migrate <file>' >&2; return 2; }
@@ -93,3 +71,28 @@ bujo_migrate() {
         (*) printf 'bujo_migrate: unrecognized filename: %s\n' "$source" >&2; return 2 ;;
     esac
 }
+
+_bujo_migrate_to() {
+    local source="$1" target="$2" marker="$3" entries tmp
+    [[ -f "$target" ]] || return 0
+    grep -q '^@MIGRATED@$' "$target" || { printf 'bujo_migrate: placeholder @MIGRATED@ not found in %s\n' "$target" >&2; return 1; }
+    entries="$(sed -n "s/^${marker}/./p" "$source" | awk '!seen[$0]++')"
+    [[ -n "$entries" ]] || return 0
+    tmp="$(mktemp "${target}.XXXXXX")" || return 1
+    if ! awk -v entries="$entries" '
+        BEGIN { n = split(entries, lines, "\n") }
+        /^@MIGRATED@$/ {
+            for (i = 1; i <= n; i++) {
+                duplicate = 0
+                for (j = 1; j < NR; j++) if (seen[j] == lines[i]) duplicate = 1
+                if (!duplicate) print lines[i]
+            }
+            print "@MIGRATED@"; next
+        }
+        { seen[NR] = $0; print }
+    ' "$target" >"$tmp"; then rm -f "$tmp"; return 1; fi
+    if ! cat "$tmp" >"$target"; then rm -f "$tmp"; return 1; fi
+    rm -f "$tmp"
+    printf 'migrated entries from %s to %s\n' "$source" "$target"
+}
+

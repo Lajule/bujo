@@ -12,21 +12,19 @@ source ./bujo.sh
 
 ## Creating files
 
-### `bujo_new <year>`
+### `bujo_new`
 
-Creates a file named for the year, such as `2026`. It contains a heading, a task
-area with the `@MIGRATED@` placeholder, and the twelve months.
+The number of arguments selects the kind of file to create:
 
-### `bujo_new <year> <month>`
-
-Creates a file named with the year and the month's English abbreviation, such
-as `2026-Feb`. The file contains a heading, a task area, and a list of the
-month's days with their weekdays.
-
-### `bujo_new <year> <month> <day>`
-
-Creates a daily journal file named with the date and weekday, such as
-`2026-Feb-28-Sat`. It contains a heading and a task area.
+- `bujo_new <year>` creates a file named for the year, such as `2026`. It
+  contains a heading, a task area with the `@MIGRATED@` placeholder, and the
+  twelve months.
+- `bujo_new <year> <month>` creates a file named with the year and the month's
+  English abbreviation, such as `2026-Feb`. It contains a heading, a task area,
+  and a list of the month's days with their weekdays.
+- `bujo_new <year> <month> <day>` creates a daily journal file named with the
+  date and weekday, such as `2026-Feb-28-Sat`. It contains a heading and a task
+  area.
 
 ## Migrating tasks
 
@@ -36,11 +34,11 @@ The argument is the name of an existing file. Migration looks for the expected
 destination files in the current directory. If a destination does not exist,
 it is skipped.
 
-- **Year** — `migrate 2026` transfers lines in `2026` that start with `>` to
+- **Year** — `bujo_migrate 2026` transfers lines in `2026` that start with `>` to
   `2027`. In the destination, the marker is replaced with `.`.
-- **Month** — `migrate 2026-Feb` transfers lines starting with `>` to the next
+- **Month** — `bujo_migrate 2026-Feb` transfers lines starting with `>` to the next
   month (`2026-Mar`), and lines starting with `<` to the year file (`2026`).
-- **Day** — `migrate 2026-Feb-28-Sat` transfers lines starting with `>` to the
+- **Day** — `bujo_migrate 2026-Feb-28-Sat` transfers lines starting with `>` to the
   following day, and lines starting with `<` to the month file (`2026-Feb`).
   The weekday in the filename must match the date.
 
