@@ -23,8 +23,8 @@ The number of arguments selects the kind of file to create:
   English abbreviation, such as `2026-Feb`. It contains a heading, a task area,
   and a list of the month's days with their weekdays.
 - `bujo_new <year> <month> <day>` creates a daily journal file named with the
-  date and weekday, such as `2026-Feb-28-Sat`. It contains a heading and a task
-  area.
+  date and weekday, such as `2026-Feb-28-Sat`. It contains a heading, a task
+  area, then hourly slots from `8H` through `20H`.
 
 ## Migrating tasks
 
