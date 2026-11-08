@@ -77,8 +77,8 @@ _bujo_migrate_to() {
     [[ -f "${target}" ]] || return 0
     grep -q '^@MIGRATED@$' "${target}" || { printf 'bujo_migrate: placeholder @MIGRATED@ not found in %s\n' "${target}" >&2; return 1; }
     entries="$(awk -v marker="${marker}" '
-        marker == "<" && /^[x~]/ { line = $0; if (!seen[line]++) print line; next }
-        index($0, marker) == 1 { line = "." substr($0, 2); if (!seen[line]++) print line }
+        marker == "<" && /^[x~]/ { print; next }
+        index($0, marker) == 1 { print "." substr($0, 2) }
     ' "${source}")"
     [[ -n "${entries}" ]] || return 0
     tmp="$(mktemp "${target}.XXXXXX")" || return 1
