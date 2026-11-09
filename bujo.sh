@@ -12,7 +12,7 @@ _bujo_new_year() {
     local year="${1:-}"
     [[ -n "${year}" ]] || { echo 'usage: bujo_new <year>' >&2; return 2; }
     LC_ALL=C date -d "Jan 1 ${year}" '+%Y' >/dev/null || return 1
-    printf '%d\n\n.\n.\n.\n@MIGRATED@\n\nJan\nFeb\nMar\nApr\nMay\nJun\nJul\nAug\nSep\nOct\nNov\nDec\n' "${year}" >"${year}"
+    printf '%d\n. existing task\n@MIGRATED@\nJan\nFeb\nMar\nApr\nMay\nJun\nJul\nAug\nSep\nOct\nNov\nDec\n' "${year}" >"${year}"
     printf 'created %s\n' "${year}"
 }
 
@@ -23,7 +23,7 @@ _bujo_new_month() {
     last_day="$(LC_ALL=C date -d "${month} 1 ${year} +1 month -1 day" '+%d')" || return 1
     last_day=$((10#${last_day})); filename="${year}-${short}"
     {
-        printf '%d %s\n\n.\n.\n.\n@MIGRATED@\n\n' "${year}" "${short}"
+        printf '%d %s\n. existing task\n@MIGRATED@\n' "${year}" "${short}"
         for ((day = 1; day <= last_day; day++)); do
             weekday="$(LC_ALL=C date -d "${month} ${day} ${year}" '+%a')" || return 1
             printf '%d %s\n' "${day}" "${weekday}"
@@ -38,7 +38,7 @@ _bujo_new_day() {
     short="$(LC_ALL=C date -d "${month} ${day} ${year}" '+%b')" || return 1
     weekday="$(LC_ALL=C date -d "${month} ${day} ${year}" '+%a')" || return 1
     filename="${year}-${short}-${day}-${weekday}"
-    printf '%d %s %d %s\n\n.\n.\n.\n@MIGRATED@\n\n8H\n9H\n10H\n11H\n12H\n13H\n14H\n15H\n16H\n17H\n18H\n19H\n20H' "${year}" "${short}" "${day}" "${weekday}" >"${filename}"
+    printf '%d %s %d %s\n. existing task\n@MIGRATED@\n8H\n9H\n10H\n11H\n12H\n13H\n14H\n15H\n16H\n17H\n18H\n19H\n20H' "${year}" "${short}" "${day}" "${weekday}" >"${filename}"
     printf 'created %s\n' "${filename}"
 }
 
