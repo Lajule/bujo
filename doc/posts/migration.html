@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La migration avec bujo — Bujo, journal en texte brut</title>
+<meta name="description" content="Comment bujo_migrate déplace les tâches d'un jour, d'un mois ou d'une année vers la période suivante.">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="../favicon-128.png">
+</head>
+<body>
+
+<header class="site">
+    <div class="wrap">
+        <div class="site-title"><a href="../index.html"><img class="site-icon" src="../favicon.svg" alt="" width="24" height="24">Bujo</a></div>
+        <div class="site-tagline">Journal de bord en texte brut, jour après jour</div>
+        <div class="lang"><span class="lang-current">FR</span><span class="sep"> | </span><a href="../en/posts/migration.html">EN</a></div>
+        <nav class="site">
+            <ul>
+                <li><a href="../index.html">Accueil</a></li>
+                <li><a href="premiers-pas.html">Premiers pas</a></li>
+                <li><a href="usage-quotidien.html">Au quotidien</a></li>
+                <li><a href="migration.html">La migration</a></li>
+                <li><a href="exemples.html">Exemples de fichiers</a></li>
+                <li><a href="https://github.com/Lajule/bujo" aria-label="GitHub" title="GitHub"><img class="github-icon" src="../assets/github.svg" alt="GitHub" width="18" height="18"></a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap">
+    <article class="post">
+        <header>
+            <h1>La migration : clôturer son jour, son mois, son année</h1>
+            <p class="meta">Publié le 17 novembre 2026 · <span class="tag">migration</span></p>
+        </header>
+
+        <p>
+            Le réflexe du soir — finir sa journée avec <code>bujo_migrate</code> — transforme votre
+            carnet en un système qui se range tout seul : les tâches non finies suivent vers le
+            lendemain, celles qui doivent monter remontent vers le mois, et celles du mois vers
+            l'année. Tout passe par une seule commande :
+        </p>
+<pre><code>bujo_migrate &lt;fichier&gt;</code></pre>
+
+        <h2>Les trois formes de migration</h2>
+        <p>La forme du nom de fichier détermine comment les entrées sont redistribuées :</p>
+        <ul>
+            <li><strong>Jour</strong> (<code>2026-Nov-17-Tue</code>) — les lignes <code>&gt;</code>
+                partent vers <em>le jour suivant</em>, les lignes <code>&lt;</code> remontent vers
+                <em>le mois</em> <code>2026-Nov</code>, et <code>x</code>/<code>~</code> mettent à
+                jour les tâches du mois.</li>
+            <li><strong>Mois</strong> (<code>2026-Nov</code>) — les lignes <code>&gt;</code> partent
+                vers <em>le mois suivant</em> (<code>2026-Dec</code>), les lignes <code>&lt;</code>
+                remontent vers <em>l'année</em> <code>2026</code>, et <code>x</code>/<code>~</code>
+                mettent à jour les tâches de l'année.</li>
+            <li><strong>Année</strong> (<code>2026</code>) — les lignes <code>&gt;</code> partent
+                vers <em>l'année suivante</em> (<code>2027</code>). Pas de niveau supérieur ici.</li>
+        </ul>
+
+        <div class="note">
+            <strong>Règle d'or :</strong> si la destination n'existe pas encore, elle est
+            simplement ignorée. Il faut donc créer le jour suivant (<code>bujo_migrate 2026-Nov-17-Tue</code>
+            n'a d'effet sur le lendemain que si <code>2026-Nov-18-Wed</code> existe). Créez vos
+            fichiers à l'avance : <code>bujo_new 2026 Nov 18</code> dès le 17, et
+            <code>bujo_new 2026 Dec</code> dès fin novembre ; côté année, <code>bujo_new 2027</code>
+            avant le passage à l'an prochain.
+        </div>
+
+        <h2>Ce que fait la migration, pas à pas</h2>
+        <p>Prenons le fichier du 17 novembre rempli comme dans l'article précédent :</p>
+<pre><code><span class="h">2026 Nov 17 Tue</span>
+&gt; rédiger la note de frais du trimestre
+&lt; proposer un point mensuel à l'équipe
+x préparer la revue de sprint
+~ acheter un nouveau clavier
+. tâche en cours de la journée
+<span class="p">@MIGRATED@</span>
+8H Petit-déjeuner et planification
+<span class="c">…</span></code></pre>
+        <p>Le soir, on lance :</p>
+<pre><code>bujo_migrate 2026-Nov-17-Tue</code></pre>
+        <p>Et les fichiers du jour suivant et du mois sont mis à jour :</p>
+<pre><code><span class="c"># 2026-Nov-18-Wed (extrait)</span>
+2026 Nov 18 Wed
+. existing task
+. rédiger la note de frais du trimestre
+<span class="p">@MIGRATED@</span>
+8H</code></pre>
+<pre><code><span class="c"># 2026-Nov (extrait)</span>
+2026 Nov
+. proposer un point mensuel à l'équipe
+x préparer la revue de sprint
+<span class="p">@MIGRATED@</span>
+1 Sun</code></pre>
+
+        <h3>Que s'est-il passé ?</h3>
+        <ul>
+            <li><code>&gt; rédiger la note de frais</code> → arrivée dans le jour suivant,
+                préfixe transformé en <code>.</code> : elle attend votre main demain.</li>
+            <li><code>&lt; proposer un point mensuel</code> → remonte vers le mois comme
+                <code>. proposer…</code>. Comme le mois contenait déjà <code>. proposer…</code>,
+                la ligne n'est pas dupliquée.</li>
+            <li><code>x préparer la revue de sprint</code>, déjà présente dans le mois comme
+                <code>. préparer…</code> → son préfixe passe à <code>x</code> : la tâche mensuelle
+                est marquée terminée.</li>
+            <li><code>~ acheter un nouveau clavier</code> n'a <em>pas</em> de correspondance dans
+                le mois → elle est ignorée, sans créer de doublon.</li>
+            <li>Le <code>.</code> initial ne migre pas : il reste dans le fichier du jour.</li>
+        </ul>
+
+        <h2>Le rôle de la balise @MIGRATED@</h2>
+        <p>
+            Chaque fichier — année, mois ou jour — contient une ligne <code>@MIGRATED@</code> qui
+            sert de <strong>point d'insertion</strong>. Les entrées qui arrivent dans un fichier
+            sont placées juste <em>avant</em> la balise, là où se trouvent les tâches en cours.
+            La balise reste en place après chaque migration, prête pour la suivante. C'est elle qui
+            permet de distinguer la « zone de tâches » (celle d'au-dessus) du reste du fichier
+            (les jours d'un mois, les créneaux d'une journée).
+        </p>
+
+        <div class="note">
+            <strong>Important :</strong> si un fichier de destination n'a pas de balise
+            <code>@MIGRATED@</code>, la migration s'arrête avec une erreur. Ne supprimez jamais
+            cette ligne de vos fichiers.
+        </div>
+
+        <h2>La boucle mensuelle et annuelle</h2>
+        <ul>
+            <li><strong>Fin de mois :</strong> <code>bujo_migrate 2026-Nov</code> fait suivre les
+                <code>&gt;</code> vers <code>2026-Dec</code>, remonte les <code>&lt;</code> vers
+                <code>2026</code>, et marque l'état des tâches annuelles.</li>
+            <li><strong>Fin d'année :</strong> <code>bujo_migrate 2026</code> fait suivre les
+                <code>&gt;</code> vers <code>2027</code> — c'est le moment de créer cette année avec
+                <code>bujo_new 2027</code>.</li>
+        </ul>
+        <p>
+            Un mois ne peut migrer que si le mois suivant existe, et une année que si l'année
+            suivante existe. La règle est toujours la même : créez d'abord, migrez ensuite.
+        </p>
+
+        <p><a href="usage-quotidien.html">← Article précédent</a> · <a href="exemples.html">Article suivant →</a></p>
+    </article>
+</main>
+
+<footer class="site">
+    <div class="wrap">
+        Carnet static en HTML · <a href="https://github.com/Lajule/bujo">le code sur GitHub</a> · <a href="https://github.com/anomalyco/opencode">par opencode</a>
+    </div>
+</footer>
+
+</body>
+</html>
