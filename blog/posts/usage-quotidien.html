@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Utiliser bujo au quotidien — Bujo, journal en texte brut</title>
+<meta name="description" content="Le rituel quotidien avec bujo.sh : les marqueurs de tâches, les heures du jour, et la tenue du carnet.">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="../favicon-128.png">
+</head>
+<body>
+
+<header class="site">
+    <div class="wrap">
+        <div class="site-title"><a href="../index.html"><img class="site-icon" src="../favicon.svg" alt="" width="24" height="24">Bujo</a></div>
+        <div class="site-tagline">Journal de bord en texte brut, jour après jour</div>
+        <div class="lang"><span class="lang-current">FR</span><span class="sep"> | </span><a href="../en/posts/daily-use.html">EN</a></div>
+        <nav class="site">
+            <ul>
+                <li><a href="../index.html">Accueil</a></li>
+                <li><a href="premiers-pas.html">Premiers pas</a></li>
+                <li><a href="usage-quotidien.html">Au quotidien</a></li>
+                <li><a href="migration.html">La migration</a></li>
+                <li><a href="exemples.html">Exemples de fichiers</a></li>
+                <li><a href="https://github.com/Lajule/bujo" aria-label="GitHub" title="GitHub"><img class="github-icon" src="../assets/github.svg" alt="GitHub" width="18" height="18"></a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap">
+    <article class="post">
+        <header>
+            <h1>Utiliser bujo au quotidien</h1>
+            <p class="meta">Publié le 17 novembre 2026 · <span class="tag">pratique</span></p>
+        </header>
+
+        <p>
+            Une fois vos fichiers créés, le carnet se tient au jour le jour : le matin, on ouvre le
+            jour courant, on rédige ses tâches avec des marqueurs simples, et on note ce qui
+            s'est passé dans les créneaux horaires. Le soir venu, un appel à
+            <code>bujo_migrate</code> range tout à sa place.
+        </p>
+
+        <h2>Le rituel du matin</h2>
+        <ol>
+            <li>Créez le jour si ce n'est pas déjà fait : <code>bujo_new 2026 Nov 17</code>.</li>
+            <li>Ouvrez le fichier <code>2026-Nov-17-Tue</code> dans votre éditeur favori.</li>
+            <li>Listez ce que vous voulez accomplir.</li>
+        </ol>
+        <p>Un premier fichier rempli ressemble à ceci :</p>
+<pre><code><span class="h">2026 Nov 17 Tue</span>
+&gt; rédiger la note de frais du trimestre
+&lt; proposer un point mensuel à l'équipe
+x préparer la revue de sprint
+~ acheter un nouveau clavier
+. tâche en cours de la journée
+<span class="p">@MIGRATED@</span>
+8H Petit-déjeuner et planification
+9H
+10H Point avec l'équipe
+11H
+12H Déjeuner
+13H
+14H
+15H
+16H
+17H
+18H
+19H
+20H</code></pre>
+
+        <h2>Les marqueurs de tâches</h2>
+        <p>
+            Dans la zone de tâches, chaque ligne commence par <strong>un seul préfixe</strong> qui
+            décide du sort de la tâche lors de la migration. Tout l'esprit de bujo tient dans ces
+            cinq caractères :
+        </p>
+        <ul>
+            <li>
+                <code>. tâche</code> — la tâche <em>reste ici</em> : elle n'est pas déplacée
+                lorsqu'on migre. C'est aussi le préfixe qu'un fichier reçoit quand une tâche lui
+                arrive en provenance d'une période plus fine (d'un jour vers le mois, par exemple).
+            </li>
+            <li>
+                <code>&gt; tâche</code> — la tâche <em>suit la période</em> : un « &gt; » dans un
+                jour part vers le jour suivant, un « &gt; » dans un mois vers le mois suivant, un
+                « &gt; » dans une année vers l'année suivante.
+            </li>
+            <li>
+                <code>&lt; tâche</code> — la tâche <em>monte au niveau supérieur</em> : un « &lt; »
+                dans un jour remonte vers son mois, un « &lt; » dans un mois remonte vers son année.
+            </li>
+            <li>
+                <code>x tâche</code> — une version <em>terminée</em> d'une tâche déjà présente au
+                niveau supérieur. La migration marque l'original comme fait, sans le réécrire.
+            </li>
+            <li>
+                <code>~ tâche</code> — une version <em>reportée</em> d'une tâche du niveau
+                supérieur : même principe que <code>x</code>, mais pour remettre à plus tard.
+            </li>
+        </ul>
+
+        <div class="note">
+            <strong>À retenir :</strong> <code>x</code> et <code>~</code> ne s'appliquent qu'à des
+            tâches qui existent déjà au niveau supérieur. S'il n'y a pas de correspondance, ils
+            sont simplement ignorés pendant la migration — jamais ajoutés.
+        </div>
+
+        <h2>Remplir la journée</h2>
+        <p>
+            Les lignes <code>8H</code> à <code>20H</code> servent de journal horaire : notez après
+            chaque créneau une courte phrase, ou laissez vide ce qui n'est pas encore arrivé. Vous
+            pouvez aussi les utiliser comme simples repères de temps dans une journée de free focus.
+        </p>
+        <div class="hours-grid">
+            <span>8H — 9H</span>
+            <span>9H — 10H</span>
+            <span>10H — 11H</span>
+            <span>11H — 12H</span>
+            <span>12H — 13H</span>
+            <span>13H — 14H</span>
+            <span>14H — 15H</span>
+            <span>15H — 16H</span>
+            <span>16H — 17H</span>
+            <span>17H — 18H</span>
+            <span>18H — 19H</span>
+            <span>19H — 20H</span>
+        </div>
+
+        <h2>Et les tâches qui avancent vraiment ?</h2>
+        <p>
+            En toute simplicité : ajoutez une ligne, retirez une ligne, changez le préfixe.
+            Une tâche commencée comme <code>&gt; rédiger le budget</code>, presque finie, devient
+            <code>x rédiger le budget</code> (la version « &gt; » apparaîtra normalement au jour
+            suivant, car elle était dans le carnet du jour — on y revient dans
+            <a href="migration.html">l'article sur la migration</a>).
+        </p>
+
+        <h2>En résumé : une journée type</h2>
+        <ol>
+            <li><strong>Matin :</strong> <code>bujo_new 2026 Nov 17</code> puis remplir les tâches du jour.</li>
+            <li><strong>Pendant la journée :</strong> maintenir la zone de tâches et annoter les créneaux.</li>
+            <li><strong>Soir :</strong> marquer ce qui est fini avec <code>x</code>, différé avec
+                <code>~</code>, à reporter avec <code>&gt;</code>, à remonter au mois avec <code>&lt;</code>,
+                puis lancer <code>bujo_migrate 2026-Nov-17-Tue</code>.</li>
+        </ol>
+        <p>
+            La commande du soir est le cœur du système — elle range vos tâches pour le lendemain.
+            Voyons-la en détail dans l'article consacré à
+            <a href="migration.html">la migration</a>.
+        </p>
+
+        <p><a href="premiers-pas.html">← Article précédent</a> · <a href="migration.html">Article suivant →</a></p>
+    </article>
+</main>
+
+<footer class="site">
+    <div class="wrap">
+        Carnet static en HTML · <a href="https://github.com/Lajule/bujo">le code sur GitHub</a> · <a href="https://github.com/anomalyco/opencode">par opencode</a>
+    </div>
+</footer>
+
+</body>
+</html>
