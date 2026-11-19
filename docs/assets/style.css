@@ -58,26 +58,12 @@ header.site {
     padding: 22px 0 18px;
 }
 
-header.site::before {
-    content: "";
-    position: absolute;
-    top: 24px;
-    left: 22px;
-    width: 34px;
-    height: 10px;
-    background:
-        radial-gradient(circle closest-side, #ff5f56 0 100%, transparent 100%) 0 0 / 10px 10px no-repeat,
-        radial-gradient(circle closest-side, #ffbd2e 0 100%, transparent 100%) 14px 0 / 10px 10px no-repeat,
-        radial-gradient(circle closest-side, #27c93f 0 100%, transparent 100%) 28px 0 / 10px 10px no-repeat;
-}
-
 header.site .wrap {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 16px;
     flex-wrap: wrap;
-    padding-left: 56px;
 }
 
 .site-title {
