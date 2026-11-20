@@ -80,7 +80,8 @@ skipped.
 
 ## Example
 
-Create a day and its two destinations:
+Create a day and its two destinations, then seed the month with tasks that
+already live there:
 
 ```bash
 bujo_new 2026 Feb 28       # creates 2026-Feb-28-Sat
@@ -88,12 +89,25 @@ bujo_new 2026 Mar 1        # creates 2026-Mar-1-Sun
 bujo_new 2026 Feb          # creates 2026-Feb
 ```
 
-Fill the day with a few tasks:
-
+```text
+# in 2026-Feb
+2026 Feb
+. send the monthly report
+. fix the build
+. plan the offsite
+@MIGRATED@
 ```
+
+Fill the day with a few tasks. The `x` and `~` lines close or postpone tasks
+that already exist in the month:
+
+```text
+# in 2026-Feb-28-Sat
 2026 Feb 28 Sat
 > prepare the sprint review
 < send the monthly report
+x fix the build
+~ plan the offsite
 @MIGRATED@
 8H
 9H
@@ -106,12 +120,20 @@ bujo_migrate 2026-Feb-28-Sat
 ```
 
 The `>` task is carried to the next day, the `<` task goes up to its month,
-and the day keeps its placeholder for the next migration:
+and the `x`/`~` lines update the matching tasks in the month. The day keeps
+its placeholder for the next migration:
 
-```
-2026-Mar-1-Sun:
-    . prepare the sprint review
+```text
+# in 2026-Mar-1-Sun
+2026 Mar 1 Sun
+. existing task
+. prepare the sprint review
+@MIGRATED@
 
-2026-Feb:
-    . send the monthly report
+# in 2026-Feb
+2026 Feb
+. send the monthly report
+x fix the build
+~ plan the offsite
+@MIGRATED@
 ```
