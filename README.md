@@ -10,6 +10,15 @@ Load the script into the current shell to use its functions:
 source ./bujo.sh
 ```
 
+## Requirements
+
+- A **Bash** shell (the functions are loaded into the current shell).
+- **GNU coreutils**: the script relies on GNU `date -d` for date arithmetic,
+  plus the standard `awk`, `grep`, `mktemp`, and `cat`.
+- On macOS, install GNU tools (`brew install coreutils`) and make `gdate`
+  available as `date` — for example by putting it first on your `PATH` — since
+  the BSD `date` lacks `-d`.
+
 ## Creating files
 
 ### `bujo_new`
@@ -25,6 +34,23 @@ The number of arguments selects the kind of file to create:
 - `bujo_new <year> <month> <day>` creates a daily journal file named with the
   date and weekday, such as `2026-Feb-28-Sat`. It contains a heading, a task
   area, then hourly slots from `8H` through `20H`.
+
+## Markers
+
+In the task area, every line starts with a single prefix that decides what
+happens to the task during migration:
+
+| Marker    | Meaning |
+| --------- | ------- |
+| `. task`  | The task **stays here**: it is not moved by migration. It is also the prefix a task receives when it arrives from a finer period (from a day to its month, for example). |
+| `> task`  | The task **follows the period**: a `>` in a day goes to the next day, in a month to the next month, in a year to the next year. |
+| `< task`  | The task **moves up one level**: a `<` in a day goes up to its month, a `<` in a month goes up to its year. |
+| `x task`  | A **completed** version of a task already present one level up: migration marks the original as done, without rewriting it. |
+| `~ task`  | A **deferred** version of a task from the level above: the same as `x`, but to postpone it. |
+
+Note: `x` and `~` only apply to tasks that already exist at the higher level.
+If there is no matching task, they are simply ignored during migration —
+never added.
 
 ## Migrating tasks
 
@@ -51,3 +77,41 @@ starting with `.`. Matching parent tasks are marked with the incoming `x` or
 `~` prefix. The placeholder is retained for future migrations. Duplicate
 migrated tasks and duplicates already present before the placeholder are
 skipped.
+
+## Example
+
+Create a day and its two destinations:
+
+```bash
+bujo_new 2026 Feb 28       # creates 2026-Feb-28-Sat
+bujo_new 2026 Mar 1        # creates 2026-Mar-1-Sun
+bujo_new 2026 Feb          # creates 2026-Feb
+```
+
+Fill the day with a few tasks:
+
+```
+2026 Feb 28 Sat
+> prepare the sprint review
+< send the monthly report
+@MIGRATED@
+8H
+9H
+```
+
+Migrate this day:
+
+```bash
+bujo_migrate 2026-Feb-28-Sat
+```
+
+The `>` task is carried to the next day, the `<` task goes up to its month,
+and the day keeps its placeholder for the next migration:
+
+```
+2026-Mar-1-Sun:
+    . prepare the sprint review
+
+2026-Feb:
+    . send the monthly report
+```
