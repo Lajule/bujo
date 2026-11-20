@@ -80,15 +80,6 @@ header.site .wrap {
 }
 .site-title a:hover { text-decoration: none; }
 
-.site-title a::after {
-    content: "█";
-    color: var(--accent);
-    line-height: 1;
-    animation: blink 1.1s steps(1) infinite;
-}
-
-@keyframes blink { 50% { opacity: 0; } }
-
 .site-icon {
     width: 1.5rem;
     height: 1.5rem;
