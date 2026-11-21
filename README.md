@@ -1,7 +1,7 @@
 # Bujo
 
 `bujo` is a Bash script for creating and organizing journal files by year,
-month, and day. Each file contains a task area followed by an `@MIGRATED@`
+month, and day. Each file contains a task area followed by an `---`
 placeholder. The `bujo_migrate` function moves marked tasks to another period.
 
 Load the script into the current shell to use its functions:
@@ -26,7 +26,7 @@ source ./bujo.sh
 The number of arguments selects the kind of file to create:
 
 - `bujo_new <year>` creates a file named for the year, such as `2026`. It
-  contains a heading, a task area with the `@MIGRATED@` placeholder, and the
+  contains a heading, a task area with the `---` placeholder, and the
   twelve months.
 - `bujo_new <year> <month>` creates a file named with the year and the month's
   English abbreviation, such as `2026-Feb`. It contains a heading, a task area,
@@ -72,7 +72,7 @@ When migrating a month or day to its parent, lines starting with `x` or `~`
 update the prefix of the matching task already present in the parent. They are
 skipped when that task is absent, so they never create a new parent task.
 
-Migrated `>` and `<` tasks are inserted where `@MIGRATED@` appears as lines
+Migrated `>` and `<` tasks are inserted where `---` appears as lines
 starting with `.`. Matching parent tasks are marked with the incoming `x` or
 `~` prefix. The placeholder is retained for future migrations. Duplicate
 migrated tasks and duplicates already present before the placeholder are
@@ -95,7 +95,7 @@ bujo_new 2026 Feb          # creates 2026-Feb
 . send the monthly report
 . fix the build
 . plan the offsite
-@MIGRATED@
+---
 ```
 
 Fill the day with a few tasks. The `x` and `~` lines close or postpone tasks
@@ -108,7 +108,7 @@ that already exist in the month:
 < send the monthly report
 x fix the build
 ~ plan the offsite
-@MIGRATED@
+---
 8H
 9H
 ```
@@ -128,12 +128,12 @@ its placeholder for the next migration:
 2026 Mar 1 Sun
 . existing task
 . prepare the sprint review
-@MIGRATED@
+---
 
 # in 2026-Feb
 2026 Feb
 . send the monthly report
 x fix the build
 ~ plan the offsite
-@MIGRATED@
+---
 ```

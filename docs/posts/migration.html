@@ -77,7 +77,7 @@
 x préparer la revue de sprint
 ~ acheter un nouveau clavier
 . tâche en cours de la journée
-<span class="p">@MIGRATED@</span>
+<span class="p">---</span>
 8H Petit-déjeuner et planification
 <span class="c">…</span></code></pre>
         <p>Le soir, on lance :</p>
@@ -87,13 +87,13 @@ x préparer la revue de sprint
 2026 Nov 18 Wed
 . existing task
 . rédiger la note de frais du trimestre
-<span class="p">@MIGRATED@</span>
+<span class="p">---</span>
 8H</code></pre>
 <pre><code><span class="c"># 2026-Nov (extrait)</span>
 2026 Nov
 . proposer un point mensuel à l'équipe
 x préparer la revue de sprint
-<span class="p">@MIGRATED@</span>
+<span class="p">---</span>
 1 Sun</code></pre>
 
         <h3>Que s'est-il passé ?</h3>
@@ -111,9 +111,9 @@ x préparer la revue de sprint
             <li>Le <code>.</code> initial ne migre pas : il reste dans le fichier du jour.</li>
         </ul>
 
-        <h2>Le rôle de la balise @MIGRATED@</h2>
+        <h2>Le rôle de la balise ---</h2>
         <p>
-            Chaque fichier — année, mois ou jour — contient une ligne <code>@MIGRATED@</code> qui
+            Chaque fichier — année, mois ou jour — contient une ligne <code>---</code> qui
             sert de <strong>point d'insertion</strong>. Les entrées qui arrivent dans un fichier
             sont placées juste <em>avant</em> la balise, là où se trouvent les tâches en cours.
             La balise reste en place après chaque migration, prête pour la suivante. C'est elle qui
@@ -123,7 +123,7 @@ x préparer la revue de sprint
 
         <div class="note">
             <strong>Important :</strong> si un fichier de destination n'a pas de balise
-            <code>@MIGRATED@</code>, la migration s'arrête avec une erreur. Ne supprimez jamais
+            <code>---</code>, la migration s'arrête avec une erreur. Ne supprimez jamais
             cette ligne de vos fichiers.
         </div>
 

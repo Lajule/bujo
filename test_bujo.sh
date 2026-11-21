@@ -57,7 +57,7 @@ bujo_new 2026 >/dev/null
 bujo_new 2024 Feb >/dev/null
 bujo_new 2026 Feb 28 >/dev/null
 
-assert_has_line 2026 '@MIGRATED@'
+assert_has_line 2026 '---'
 assert_has_line 2026 Dec
 assert_has_line 2024-Feb '29 Thu'
 assert_has_line 2026-Feb-28-Sat '8H'
@@ -78,19 +78,19 @@ cat >2026-Feb <<'EOF'
 x existing completed task
 ~ existing deferred task
 x absent parent task
-@MIGRATED@
+---
 EOF
 
 cat >2026-Mar <<'EOF'
 2026 Mar
-@MIGRATED@
+---
 EOF
 
 cat >2026 <<'EOF'
 2026
 . existing completed task
 . existing deferred task
-@MIGRATED@
+---
 after placeholder
 EOF
 
@@ -109,18 +109,18 @@ cat >2026-Feb-28-Sat <<'EOF'
 < new month task
 x existing completed task
 ~ absent month task
-@MIGRATED@
+---
 EOF
 
 cat >2026-Mar-1-Sun <<'EOF'
 2026 Mar 1 Sun
-@MIGRATED@
+---
 EOF
 
 cat >2026-Feb <<'EOF'
 2026 Feb
 . existing completed task
-@MIGRATED@
+---
 EOF
 
 bujo_migrate 2026-Feb-28-Sat >/dev/null

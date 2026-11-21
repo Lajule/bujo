@@ -81,7 +81,7 @@ _bujo_new_year() {
 
     {
         printf '%d\n' "${year}"
-        printf '. existing task\n@MIGRATED@\n'
+        printf '. existing task\n---\n'
         printf 'Jan\nFeb\nMar\nApr\nMay\nJun\nJul\nAug\nSep\nOct\nNov\nDec\n'
     } >"${year}"
     printf 'created %s\n' "${year}"
@@ -101,7 +101,7 @@ _bujo_new_month() {
     filename="${year}-${short}"
 
     {
-        printf '%d %s\n. existing task\n@MIGRATED@\n' "${year}" "${short}"
+        printf '%d %s\n. existing task\n---\n' "${year}" "${short}"
         for ((day = 1; day <= last_day; day++)); do
             weekday="$(LC_ALL=C date -d "${month} ${day} ${year}" '+%a')" || return 1
             printf '%d %s\n' "${day}" "${weekday}"
@@ -123,7 +123,7 @@ _bujo_new_day() {
     filename="${year}-${short}-${day}-${weekday}"
 
     {
-        printf '%d %s %d %s\n. existing task\n@MIGRATED@\n' "${year}" "${short}" "${day}" "${weekday}"
+        printf '%d %s %d %s\n. existing task\n---\n' "${year}" "${short}" "${day}" "${weekday}"
         for ((hour = 8; hour <= 20; hour++)); do
             printf '%dH\n' "${hour}"
         done
@@ -138,8 +138,8 @@ _bujo_migrate_to() {
     if [[ ! -f "${target}" ]]; then
         return 0
     fi
-    if ! grep -q '^@MIGRATED@$' "${target}"; then
-        printf 'bujo_migrate: placeholder @MIGRATED@ not found in %s\n' "${target}" >&2
+    if ! grep -q '^---$' "${target}"; then
+        printf 'bujo_migrate: placeholder --- not found in %s\n' "${target}" >&2
         return 1
     fi
 
@@ -158,7 +158,7 @@ _bujo_migrate_to() {
             n = split(entries, lines, "\n")
         }
 
-        /^@MIGRATED@$/ {
+        /^---$/ {
             total = NR - 1
 
             for (i = 1; i <= n; i++) {
@@ -189,7 +189,7 @@ _bujo_migrate_to() {
             for (j = 1; j <= total; j++) {
                 print seen[j]
             }
-            print "@MIGRATED@"
+            print "---"
             processed = 1
             next
         }
